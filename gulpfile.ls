@@ -32,8 +32,9 @@ gulp.task \js:vendor <[bower]> ->
 
 gulp.task \js:app ->
   gulp.src do
-    * "#{path.src}/**/*.ls"
-    ...
+    * "#{path.src}/ls/services.ls"
+      "#{path.src}/ls/directives.ls"
+      "#{path.src}/ls/main.ls"
   .pipe gulp-concat 'main.ls'
   .pipe livescript!
   .pipe gulp.dest "#{path.build}/js"
@@ -62,7 +63,13 @@ gulp.task \html ->
   .pipe gulp.dest path.build
   .pipe livereload!
 
-gulp.task \build <[vendor js:app css:app html]>
+gulp.task \template ->
+  gulp.src "#{path.src}/template/*.jade"
+  .pipe jade!
+  .pipe gulp.dest "#{path.build}/template"
+  .pipe livereload!
+
+gulp.task \build <[vendor js:app css:app html template]>
 
 gulp.task \server (next) ->
   server = new node-static.Server path.build
@@ -74,10 +81,11 @@ gulp.task \server (next) ->
     next!
 
 gulp.task \watch ->
-  gulp.watch 'bower.json'             <[vendor]>
-  gulp.watch "#{path.src}/**/*.ls"    <[js:app]>
-  gulp.watch "#{path.src}/**/*.styl"  <[css:app]>
-  gulp.watch "#{path.src}/*.jade"     <[html]>
+  gulp.watch 'bower.json'                  <[vendor]>
+  gulp.watch "#{path.src}/**/*.ls"         <[js:app]>
+  gulp.watch "#{path.src}/**/*.styl"       <[css:app]>
+  gulp.watch "#{path.src}/*.jade"          <[html]>
+  gulp.watch "#{path.src}/template/*.jade" <[template]>
 
 gulp.task \livereload ->
   port = 35729
