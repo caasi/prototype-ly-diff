@@ -39,17 +39,28 @@
     };
   });
   this.BillsCtrl = function($scope, model){
-    $scope.bills = ['989L16035', '970L19045', '1619L16058'];
+    $scope.bills = ['989L16035', '970L19045', '1619L16058', '1539L16073', '1619L16077'];
     return $scope.get = function(bill){
       return model.get("bills/" + bill + "/data").success(function(data){
-        var contents, i$, len$, content, results$ = [];
-        console.log(data);
+        var contents, h, i$, len$, content, ref$, original, proposed, results$ = [];
         contents = data.content[0].content;
-        for (i$ = 0, len$ = contents.length; i$ < len$; ++i$) {
-          content = contents[i$];
-          results$.push(console.log(model.parse(content[0])));
+        h = data.content[0].header;
+        switch (h[0]) {
+        case '條文':
+          for (i$ = 0, len$ = contents.length; i$ < len$; ++i$) {
+            content = contents[i$];
+            results$.push(console.log(model.parse(content)));
+          }
+          return results$;
+          break;
+        case '修正條文':
+          for (i$ = 0, len$ = contents.length; i$ < len$; ++i$) {
+            content = contents[i$];
+            ref$ = content.map(model.parse, model), original = ref$[0], proposed = ref$[1];
+            results$.push(console.log(original, proposed));
+          }
+          return results$;
         }
-        return results$;
       });
     };
   };
